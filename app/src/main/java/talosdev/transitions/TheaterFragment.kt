@@ -12,10 +12,9 @@ import kotlinx.android.synthetic.main.fragment_theater.*
 
 
 private const val ARG_POSITION = "position"
-private const val ARG_PARAM2 = "param2"
-
 
 class TheaterFragment : Fragment() {
+
     private var position: Int = 0
     private var listener: TheaterFragment.OnFragmentInteractionListener? = null
     private lateinit var viewModel: ImagesViewModel
@@ -52,11 +51,7 @@ class TheaterFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_theater, container, false)
-
-
-
-        return view
+        return inflater.inflate(R.layout.fragment_theater, container, false)
     }
 
 
@@ -65,12 +60,8 @@ class TheaterFragment : Fragment() {
         val viewPager: ViewPager = view.findViewById(R.id.viewPager)
 
         viewPager.adapter = TheaterViewPagerAdapter(
-            fragmentManager!!, viewModel.liveData.value!!, object : LoadImageListener {
-                override fun onImageLoad(success: Boolean) {
-                    startPostponedEnterTransition()
-                }
-
-            })
+            // TRANS important: must be child fragment manager so that child fragment can call getParent.
+            childFragmentManager, viewModel.liveData.value!!)
 
         viewPager.currentItem = position
 
@@ -138,12 +129,10 @@ class TheaterFragment : Fragment() {
     }
 
     interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         fun onTheaterInteraction()
     }
 
     companion object {
-
         @JvmStatic
         fun newInstance(position: Int) =
             TheaterFragment().apply {
@@ -152,6 +141,5 @@ class TheaterFragment : Fragment() {
                 }
             }
     }
-
 
 }

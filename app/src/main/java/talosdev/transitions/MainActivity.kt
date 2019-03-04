@@ -14,9 +14,9 @@ class MainActivity : AppCompatActivity(),
     private lateinit var viewModel: ImagesViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
         viewModel = ViewModelProviders.of(this).get(ImagesViewModel::class.java)
+
+        super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
 
@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     companion object {
-        private const val TAG_THEATER = "theater"
+        const val TAG_THEATER = "theater"
         private const val TAG_GALLERY = "gallery"
     }
 }

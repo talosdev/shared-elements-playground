@@ -29,28 +29,7 @@ class GridFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_grid, container, false)
-
-
-        return view
-    }
-
-    private fun prepareTransitions() {
-
-        exitTransition = TransitionInflater.from(context).inflateTransition(R.transition.grid_exit_transition)
-
-        setExitSharedElementCallback(
-            object : SharedElementCallback() {
-                override fun onMapSharedElements(names: List<String>, sharedElements: MutableMap<String, View>) {
-                    // Locate the ViewHolder for the clicked position.
-                    val selectedViewHolder = recyclerView
-                        .findViewHolderForAdapterPosition(viewModel.currentPosition)
-                        ?: throw NullPointerException("no viewholder found")
-
-                    // Map the first shared element name to the child ImageView.
-                    sharedElements[names[0]] = (selectedViewHolder as GridAdapter.ImageViewHolder).imageView
-                }
-            })
+        return inflater.inflate(R.layout.fragment_grid, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -81,6 +60,23 @@ class GridFragment : Fragment() {
         prepareTransitions()
         postponeEnterTransition()
 
+    }
+
+    private fun prepareTransitions() {
+        exitTransition = TransitionInflater.from(context).inflateTransition(R.transition.grid_exit_transition)
+
+        setExitSharedElementCallback(
+            object : SharedElementCallback() {
+                override fun onMapSharedElements(names: List<String>, sharedElements: MutableMap<String, View>) {
+                    // Locate the ViewHolder for the clicked position.
+                    val selectedViewHolder = recyclerView
+                        .findViewHolderForAdapterPosition(viewModel.currentPosition)
+                        ?: throw NullPointerException("no viewholder found")
+
+                    // Map the first shared element name to the child ImageView.
+                    sharedElements[names[0]] = (selectedViewHolder as GridAdapter.ImageViewHolder).imageView
+                }
+            })
     }
 
     override fun onAttach(context: Context) {

@@ -12,13 +12,11 @@ import androidx.fragment.app.FragmentStatePagerAdapter
  */
 class TheaterViewPagerAdapter(
     fm: FragmentManager,
-    private val urls: List<String>,
-    private val listener: LoadImageListener
+    private val urls: List<String>
 ) : FragmentStatePagerAdapter(fm) {
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val item = super.instantiateItem(container, position) as ImageFragment
-        item.listener = listener
         return item
     }
 
