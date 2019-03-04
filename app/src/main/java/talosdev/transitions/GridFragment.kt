@@ -11,14 +11,15 @@ import androidx.core.app.SharedElementCallback
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import io.reactivex.disposables.CompositeDisposable
 
 
 class GridFragment : Fragment() {
     private var listener: OnFragmentInteractionListener? = null
     private lateinit var viewModel: ImagesViewModel
 
-
     private lateinit var recyclerView: RecyclerView
+    private val disposables = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +27,7 @@ class GridFragment : Fragment() {
         }
 
         viewModel = (activity as HasViewModel).getViewModel()
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -37,7 +39,7 @@ class GridFragment : Fragment() {
         recyclerView = view.findViewById(R.id.recycler)
 
         recyclerView.layoutManager = GridLayoutManager(context!!, 2, RecyclerView.VERTICAL, false)
-        val adapter = GridAdapter(viewModel.liveData.value!!)
+        val adapter = GridAdapter(viewModel.liveData.value!!, viewModel)
         recyclerView.adapter = adapter
 
         adapter.listener = object : ImageListener {
@@ -47,12 +49,6 @@ class GridFragment : Fragment() {
                     (recyclerView.findViewHolderForAdapterPosition(position) as GridAdapter.ImageViewHolder).imageView
                 )
             }
-
-            override fun onImageLoadComplete(success: Boolean, position: Int) {
-                if (position == viewModel.currentPosition) {
-                    startPostponedEnterTransition()
-                }
-            }
         }
 
         scrollToPosition()
@@ -60,6 +56,17 @@ class GridFragment : Fragment() {
         prepareTransitions()
         postponeEnterTransition()
 
+        disposables.add(viewModel.loadCompleteStream
+            .subscribe {
+                if (it is LoadComplete.GridLoadComplete) {
+                    startPostponedEnterTransition()
+                }
+            })
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        disposables.clear()
     }
 
     private fun prepareTransitions() {

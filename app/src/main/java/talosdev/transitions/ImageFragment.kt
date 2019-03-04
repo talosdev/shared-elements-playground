@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
 
@@ -21,7 +22,11 @@ class ImageFragment : Fragment() {
     private var imageUrl: String? = null
     private var target: Target? = null
 
+    private lateinit var viewModel : ImagesViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        viewModel = ViewModelProviders.of(activity!!).get(ImagesViewModel::class.java)
+
         super.onCreate(savedInstanceState)
         arguments?.let {
             imageUrl = it.getString(ARG_IMAGE_URL)
@@ -50,9 +55,7 @@ class ImageFragment : Fragment() {
 
             override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
                 Log.e("PICASSO", "Error", e)
-//                listener?.onImageLoad(false)
-                val parent = parentFragment as Fragment
-                parent.startPostponedEnterTransition()
+                viewModel.registerTheaterLoadComplete()
             }
 
             override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
@@ -60,8 +63,8 @@ class ImageFragment : Fragment() {
                 imageView.setImageBitmap(bitmap)
 
                 // TRANS
-                val parent = parentFragment as Fragment
-                parent.startPostponedEnterTransition()            }
+                viewModel.registerTheaterLoadComplete()
+            }
         }
 
         Picasso.get().load(imageUrl).into(target!!)

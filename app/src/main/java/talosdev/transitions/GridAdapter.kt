@@ -17,7 +17,8 @@ import com.squareup.picasso.Target
  *
  * @author Aris Papadopoulos (aris@scruff.com)
  */
-class GridAdapter(private val urls: List<String>) : RecyclerView.Adapter<GridAdapter.ImageViewHolder>() {
+class GridAdapter(private val urls: List<String>,
+                  private val viewModel: ImagesViewModel) : RecyclerView.Adapter<GridAdapter.ImageViewHolder>() {
 
     var listener: ImageListener? = null
 
@@ -58,12 +59,12 @@ class GridAdapter(private val urls: List<String>) : RecyclerView.Adapter<GridAda
 
                 override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
                     Log.e("PICASSO", "Error $url", e)
-                    this@GridAdapter.listener?.onImageLoadComplete(false, adapterPosition)
+                    viewModel.registerGridLoadComplete(adapterPosition)
                 }
 
                 override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
                     imageView.setImageBitmap(bitmap)
-                    this@GridAdapter.listener?.onImageLoadComplete(true, adapterPosition)
+                    viewModel.registerGridLoadComplete(adapterPosition)
                 }
 
             }
@@ -79,5 +80,4 @@ class GridAdapter(private val urls: List<String>) : RecyclerView.Adapter<GridAda
 
 interface ImageListener {
     fun onClick(position: Int)
-    fun onImageLoadComplete(success: Boolean, position: Int)
 }

@@ -7,6 +7,7 @@ import android.view.*
 import androidx.core.app.SharedElementCallback
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_image.*
 import kotlinx.android.synthetic.main.fragment_theater.*
 
@@ -18,6 +19,7 @@ class TheaterFragment : Fragment() {
     private var position: Int = 0
     private var listener: TheaterFragment.OnFragmentInteractionListener? = null
     private lateinit var viewModel: ImagesViewModel
+    private val disposables = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,8 +30,6 @@ class TheaterFragment : Fragment() {
         viewModel = (activity as HasViewModel).getViewModel()
 
         setHasOptionsMenu(true)
-
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -85,6 +85,15 @@ class TheaterFragment : Fragment() {
         if (savedInstanceState == null) {
             postponeEnterTransition()
         }
+
+
+        disposables.add(viewModel.loadCompleteStream
+            .subscribe {
+                if (it is LoadComplete.TheaterLoadComplete) {
+                    startPostponedEnterTransition()
+                }
+            }
+        )
 
     }
 
