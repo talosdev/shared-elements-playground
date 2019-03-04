@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModel
  */
 class ImagesViewModel: ViewModel() {
 
-    private val urls = (100..120).map{
+    private val urls = (110..150).map{
         "https://picsum.photos/600/800?image=$it"
     }
 

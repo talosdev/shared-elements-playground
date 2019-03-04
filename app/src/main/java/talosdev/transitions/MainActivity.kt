@@ -6,7 +6,11 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 
-class MainActivity : AppCompatActivity(), HasViewModel, TheaterFragment.OnFragmentInteractionListener {
+class MainActivity : AppCompatActivity(),
+    HasViewModel,
+    GridFragment.OnFragmentInteractionListener,
+    TheaterFragment.OnFragmentInteractionListener {
+
     private lateinit var viewModel: ImagesViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,7 +24,8 @@ class MainActivity : AppCompatActivity(), HasViewModel, TheaterFragment.OnFragme
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                .add(R.id.frame, TheaterFragment.newInstance(0))
+                .add(R.id.frame, GridFragment.newInstance())
+//                .add(R.id.frame, TheaterFragment.newInstance(0))
                 .commit()
         }
 
