@@ -44,8 +44,8 @@ class GridFragment : Fragment() {
                 override fun onMapSharedElements(names: List<String>, sharedElements: MutableMap<String, View>) {
                     // Locate the ViewHolder for the clicked position.
                     val selectedViewHolder = recyclerView
-                        .findViewHolderForAdapterPosition(viewModel.currentPosition) ?:
-                    throw NullPointerException("no viewholder found")
+                        .findViewHolderForAdapterPosition(viewModel.currentPosition)
+                        ?: throw NullPointerException("no viewholder found")
 
                     // Map the first shared element name to the child ImageView.
                     sharedElements[names[0]] = (selectedViewHolder as GridAdapter.ImageViewHolder).imageView
@@ -74,8 +74,9 @@ class GridFragment : Fragment() {
                     startPostponedEnterTransition()
                 }
             }
-
         }
+
+        scrollToPosition()
 
         prepareTransitions()
         postponeEnterTransition()
@@ -94,6 +95,37 @@ class GridFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         listener = null
+    }
+
+    /**
+     * Scrolls the recycler view to show the last viewed item in the grid. This is important when
+     * navigating back from the grid.
+     */
+    private fun scrollToPosition() {
+        recyclerView.addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
+            override fun onLayoutChange(
+                v: View,
+                left: Int,
+                top: Int,
+                right: Int,
+                bottom: Int,
+                oldLeft: Int,
+                oldTop: Int,
+                oldRight: Int,
+                oldBottom: Int
+            ) {
+                recyclerView.removeOnLayoutChangeListener(this)
+                val layoutManager = recyclerView.layoutManager
+                val viewAtPosition = layoutManager!!.findViewByPosition(viewModel.currentPosition)
+                // Scroll to position if the view for the current position is null (not currently part of
+                // layout manager children), or it's not completely visible.
+                if (viewAtPosition == null || layoutManager
+                        .isViewPartiallyVisible(viewAtPosition, false, true)
+                ) {
+                    recyclerView.post { layoutManager.scrollToPosition(viewModel.currentPosition) }
+                }
+            }
+        })
     }
 
     interface OnFragmentInteractionListener {
