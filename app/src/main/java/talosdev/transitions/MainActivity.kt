@@ -46,13 +46,16 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onTheaterInteraction() {
-        val theaterFragment = supportFragmentManager.findFragmentByTag(TAG_THEATER)
+//        val theaterFragment = supportFragmentManager.findFragmentByTag(TAG_THEATER)
+//
+//        supportFragmentManager.beginTransaction()
+//            .remove(theaterFragment!!)
+//            .commit()
+//        supportFragmentManager.popBackStack()
 
-        supportFragmentManager.beginTransaction()
-            .remove(theaterFragment!!)
-            .commit()
-        supportFragmentManager.popBackStack()
-
+        // For the time being, in order to be able to show animation when clicking the grid item,
+        // do this TODO
+        onBackPressed()
     }
 
     companion object {
