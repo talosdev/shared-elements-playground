@@ -12,14 +12,14 @@ import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
 
 
-
 /**
  * Created by Perry Street Software Inc. on Mar 04, 2019.
  *
  * @author Aris Papadopoulos (aris@scruff.com)
  */
-class GridAdapter(private val urls: List<String>): RecyclerView.Adapter<ImageViewHolder>() {
+class GridAdapter(private val urls: List<String>) : RecyclerView.Adapter<ImageViewHolder>() {
 
+    var listener: ImageClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.grid_item, parent, false)
@@ -33,16 +33,24 @@ class GridAdapter(private val urls: List<String>): RecyclerView.Adapter<ImageVie
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
         holder.bind(urls[position])
+
+        holder.imageView.setOnClickListener {
+            listener?.onClick(holder.adapterPosition)
+        }
     }
 }
 
-class ImageViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-    val imageView : ImageView = itemView.findViewById(R.id.imageView)
-    private var target : Target? = null
+class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    val imageView: ImageView = itemView.findViewById(R.id.imageView)
+    private var target: Target? = null
 
 
     fun bind(url: String) {
-         target = object: Target { override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
+        // Clear previous image - dummy "placeholder"
+        imageView.setImageBitmap(null)
+
+        target = object : Target {
+            override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
                 Log.d("PICASSO", "Prepare loading $url")
 
             }
@@ -59,8 +67,12 @@ class ImageViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         }
         Picasso.get().load(url).into(target as Target)
 
+
     }
 
 
+}
 
+interface ImageClickListener {
+    fun onClick(position: Int)
 }

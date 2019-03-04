@@ -1,7 +1,6 @@
 package talosdev.transitions
 
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -40,6 +39,13 @@ class GridFragment : Fragment() {
         recyclerView.layoutManager = GridLayoutManager(context!!, 2, GridLayoutManager.VERTICAL, false)
         val adapter = GridAdapter(viewModel.liveData.value!!)
         recyclerView.adapter = adapter
+
+        adapter.listener = object: ImageClickListener {
+            override fun onClick(position: Int) {
+                listener?.onGridInteraction(position)
+            }
+
+        }
     }
 
     override fun onAttach(context: Context) {
@@ -57,8 +63,7 @@ class GridFragment : Fragment() {
     }
 
     interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        fun onFragmentInteraction(uri: Uri)
+        fun onGridInteraction(position: Int)
     }
 
     companion object {

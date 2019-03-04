@@ -25,15 +25,19 @@ class MainActivity : AppCompatActivity(),
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                 .add(R.id.frame, GridFragment.newInstance())
-//                .add(R.id.frame, TheaterFragment.newInstance(0))
                 .commit()
         }
-
-
     }
 
     override fun getViewModel(): ImagesViewModel {
         return viewModel
+    }
+
+    override fun onGridInteraction(position: Int) {
+        supportFragmentManager.beginTransaction()
+            .add(R.id.frame,TheaterFragment.newInstance(position))
+            .addToBackStack(null)
+            .commit()
     }
 
     override fun onFragmentInteraction(uri: Uri) {
