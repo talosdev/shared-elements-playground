@@ -1,24 +1,19 @@
 package talosdev.transitions
 
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_POSITION = "param1"
+private const val ARG_POSITION = "position"
 private const val ARG_PARAM2 = "param2"
 
 
 class TheaterFragment : Fragment() {
     private var position: Int = 0
-    private var listener: OnFragmentInteractionListener? = null
+    private var listener: TheaterFragment.OnFragmentInteractionListener? = null
     private lateinit var viewModel: ImagesViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,6 +23,23 @@ class TheaterFragment : Fragment() {
         }
 
         viewModel = (activity as HasViewModel).getViewModel()
+
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.theater, menu)
+    }
+
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.goToGrid -> {
+                listener?.onTheaterInteraction()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     override fun onCreateView(
@@ -51,7 +63,7 @@ class TheaterFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is OnFragmentInteractionListener) {
+        if (context is TheaterFragment.OnFragmentInteractionListener) {
             listener = context
         } else {
             throw RuntimeException("$context must implement OnFragmentInteractionListener")
@@ -65,7 +77,7 @@ class TheaterFragment : Fragment() {
 
     interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        fun onFragmentInteraction(uri: Uri)
+        fun onTheaterInteraction()
     }
 
     companion object {

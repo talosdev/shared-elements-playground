@@ -1,6 +1,5 @@
 package talosdev.transitions
 
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -24,7 +23,7 @@ class MainActivity : AppCompatActivity(),
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                .add(R.id.frame, GridFragment.newInstance())
+                .add(R.id.frame, GridFragment.newInstance(), TAG_GALLERY)
                 .commit()
         }
     }
@@ -35,15 +34,27 @@ class MainActivity : AppCompatActivity(),
 
     override fun onGridInteraction(position: Int) {
         supportFragmentManager.beginTransaction()
-            .add(R.id.frame,TheaterFragment.newInstance(position))
+            .add(R.id.frame,TheaterFragment.newInstance(position), TAG_THEATER)
             .addToBackStack(null)
             .commit()
     }
 
-    override fun onFragmentInteraction(uri: Uri) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun onTheaterInteraction() {
+        val theaterFragment = supportFragmentManager.findFragmentByTag(TAG_THEATER)
+
+        supportFragmentManager.beginTransaction()
+            .remove(theaterFragment!!)
+            .commit()
+        supportFragmentManager.popBackStack()
+
+    }
+
+    companion object {
+        private const val TAG_THEATER = "theater"
+        private const val TAG_GALLERY = "gallery"
     }
 }
+
 
 interface HasViewModel {
     fun getViewModel(): ImagesViewModel
