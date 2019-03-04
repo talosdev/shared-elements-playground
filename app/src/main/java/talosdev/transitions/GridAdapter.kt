@@ -17,9 +17,9 @@ import com.squareup.picasso.Target
  *
  * @author Aris Papadopoulos (aris@scruff.com)
  */
-class GridAdapter(private val urls: List<String>) : RecyclerView.Adapter<ImageViewHolder>() {
+class GridAdapter(private val urls: List<String>) : RecyclerView.Adapter<GridAdapter.ImageViewHolder>() {
 
-    var listener: ImageClickListener? = null
+    var listener: ImageListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.grid_item, parent, false)
@@ -38,41 +38,46 @@ class GridAdapter(private val urls: List<String>) : RecyclerView.Adapter<ImageVi
             listener?.onClick(holder.adapterPosition)
         }
     }
-}
 
-class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    val imageView: ImageView = itemView.findViewById(R.id.imageView)
-    private var target: Target? = null
+    inner class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val imageView: ImageView = itemView.findViewById(R.id.imageView)
+        private var target: Target? = null
 
 
-    fun bind(url: String) {
-        // Clear previous image - dummy "placeholder"
-        imageView.setImageBitmap(null)
+        fun bind(url: String) {
+            // Clear previous image - dummy "placeholder"
+            imageView.setImageBitmap(null)
+            // TRANS
+            imageView.transitionName = url
 
-        target = object : Target {
-            override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
-                Log.d("PICASSO", "Prepare loading $url")
+            target = object : Target {
+                override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
+                    Log.d("PICASSO", "Prepare loading $url")
+
+                }
+
+                override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
+                    Log.e("PICASSO", "Error $url", e)
+                    this@GridAdapter.listener?.onImageLoadComplete(false, adapterPosition)
+                }
+
+                override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+                    imageView.setImageBitmap(bitmap)
+                    this@GridAdapter.listener?.onImageLoadComplete(true, adapterPosition)
+                }
 
             }
+            Picasso.get().load(url).into(target as Target)
 
-            override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
-                Log.e("PICASSO", "Error $url", e)
-
-            }
-
-            override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
-                imageView.setImageBitmap(bitmap)
-            }
 
         }
-        Picasso.get().load(url).into(target as Target)
 
 
     }
 
-
 }
 
-interface ImageClickListener {
+interface ImageListener {
     fun onClick(position: Int)
+    fun onImageLoadComplete(success: Boolean, position: Int)
 }

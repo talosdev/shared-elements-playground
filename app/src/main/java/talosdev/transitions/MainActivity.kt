@@ -2,6 +2,7 @@ package talosdev.transitions
 
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 
@@ -32,9 +33,14 @@ class MainActivity : AppCompatActivity(),
         return viewModel
     }
 
-    override fun onGridInteraction(position: Int) {
+    override fun onGridInteraction(position: Int, imageView: ImageView) {
+        viewModel.currentPosition = position
+
         supportFragmentManager.beginTransaction()
-            .add(R.id.frame,TheaterFragment.newInstance(position), TAG_THEATER)
+            // TRANS - notify the fragment manager that we have a transition
+            .setReorderingAllowed(true)
+            .addSharedElement(imageView, imageView.transitionName)
+            .replace(R.id.frame, TheaterFragment.newInstance(position), TAG_THEATER)
             .addToBackStack(null)
             .commit()
     }

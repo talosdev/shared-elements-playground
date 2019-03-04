@@ -2,9 +2,13 @@ package talosdev.transitions
 
 import android.content.Context
 import android.os.Bundle
+import android.transition.TransitionInflater
 import android.view.*
+import androidx.core.app.SharedElementCallback
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
+import kotlinx.android.synthetic.main.fragment_image.*
+import kotlinx.android.synthetic.main.fragment_theater.*
 
 
 private const val ARG_POSITION = "position"
@@ -25,6 +29,8 @@ class TheaterFragment : Fragment() {
         viewModel = (activity as HasViewModel).getViewModel()
 
         setHasOptionsMenu(true)
+
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -46,8 +52,11 @@ class TheaterFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_theater, container, false)
+        val view = inflater.inflate(R.layout.fragment_theater, container, false)
+
+
+
+        return view
     }
 
 
@@ -55,9 +64,62 @@ class TheaterFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val viewPager: ViewPager = view.findViewById(R.id.viewPager)
 
-        viewPager.adapter = TheaterViewPagerAdapter(fragmentManager!!, viewModel.liveData.value!!)
+        viewPager.adapter = TheaterViewPagerAdapter(
+            fragmentManager!!, viewModel.liveData.value!!, object : LoadImageListener {
+                override fun onImageLoad(success: Boolean) {
+                    startPostponedEnterTransition()
+                }
+
+            })
 
         viewPager.currentItem = position
+
+        viewPager.addOnPageChangeListener( object : ViewPager.OnPageChangeListener {
+            override fun onPageScrollStateChanged(state: Int) {
+            }
+
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+            }
+
+            override fun onPageSelected(position: Int) {
+                viewModel.currentPosition = position
+            }
+
+        })
+
+        // must call prepare after the viewpager is set up
+        prepareTransition()
+        // TRANS
+        // Avoid a postponeEnterTransition on orientation change, and postpone only of first creation
+        if (savedInstanceState == null) {
+            postponeEnterTransition()
+        }
+
+    }
+
+    private fun prepareTransition() {
+        // TRANS 2 - Set enter transition
+        val transition = TransitionInflater.from(context)
+            .inflateTransition(R.transition.image_transition)
+        sharedElementEnterTransition = transition
+
+
+        // TRANS - mapping
+        // A similar mapping is set at the GridFragment with a setExitSharedElementCallback.
+        setEnterSharedElementCallback(
+            object : SharedElementCallback() {
+                override fun onMapSharedElements(names: List<String>, sharedElements: MutableMap<String, View>) {
+                    // Locate the image view at the primary fragment (the ImageFragment that is currently
+                    // visible). To locate the fragment, call instantiateItem with the selection position.
+                    // At this stage, the method will simply return the fragment at the position and will
+                    // not create a new one.
+                    val currentFragment : ImageFragment =
+                        viewPager.adapter?.instantiateItem(viewPager, viewModel.currentPosition) as ImageFragment
+
+                    // Map the first shared element name to the child ImageView.
+                    sharedElements[names[0]] = currentFragment.fullscreenImage
+                }
+            })
 
     }
 
@@ -90,4 +152,6 @@ class TheaterFragment : Fragment() {
                 }
             }
     }
+
+
 }

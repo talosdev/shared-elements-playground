@@ -14,6 +14,7 @@ class ImagesViewModel: ViewModel() {
         "https://picsum.photos/600/800?image=$it"
     }
 
+    var currentPosition: Int = -1
 
     val liveData: MutableLiveData<List<String>> = MutableLiveData()
 

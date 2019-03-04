@@ -18,6 +18,7 @@ private const val ARG_IMAGE_URL = "image_url"
 
 class ImageFragment : Fragment() {
     private var imageUrl: String? = null
+    lateinit var listener: LoadImageListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +38,7 @@ class ImageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val imageView = view.findViewById<ImageView>(R.id.fullscreenImage)
+        imageView.transitionName = imageUrl
 
 
         val target = object : com.squareup.picasso.Target {
@@ -46,12 +48,15 @@ class ImageFragment : Fragment() {
 
             override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
                 Log.e("PICASSO", "Error", e)
+                listener.onImageLoad(false)
             }
 
             override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
                 imageView.setImageBitmap(bitmap)
-            }
 
+                // TRANS
+                listener.onImageLoad(true)
+            }
         }
 
         Picasso.get().load(imageUrl).into(target)
@@ -68,4 +73,10 @@ class ImageFragment : Fragment() {
                 }
             }
     }
+
+}
+
+
+interface LoadImageListener {
+    fun onImageLoad(success: Boolean)
 }
