@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -22,7 +23,7 @@ class ImageFragment : Fragment() {
     private var imageUrl: String? = null
     private var target: Target? = null
 
-    private lateinit var viewModel : ImagesViewModel
+    private lateinit var viewModel: ImagesViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         viewModel = ViewModelProviders.of(activity!!).get(ImagesViewModel::class.java)
@@ -69,6 +70,8 @@ class ImageFragment : Fragment() {
 
         Picasso.get().load(imageUrl).into(target!!)
 
+        imageView.setOnTouchListener(SwipeToDismissListener(imageView))
+
 
     }
 
@@ -82,6 +85,42 @@ class ImageFragment : Fragment() {
             }
     }
 
+    inner class SwipeToDismissListener(private val imageView: ImageView) : View.OnTouchListener {
+        private var y0 = 0f
+        private var currentScale = 1f
+        private val scaleThreshold = 0.75f
+
+        override fun onTouch(v: View, event: MotionEvent): Boolean {
+            return when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    y0 = event.rawY
+                    imageView.pivotY = 0f
+                    true
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    val dy = event.rawY - y0
+                    currentScale = 1 - dy / resources.displayMetrics.heightPixels
+
+                    imageView.translationY = dy
+                    imageView.scaleX = currentScale
+                    imageView.scaleY = currentScale
+                    true
+                }
+                MotionEvent.ACTION_UP -> {
+                    if (currentScale >= scaleThreshold) {
+                        imageView.animate().scaleX(1f).scaleY(1f).translationY(0f).start()
+                    } else {
+                        activity?.onBackPressed()
+                    }
+                    true
+                }
+                else -> {
+                    false
+                }
+            }
+
+        }
+
+    }
+
 }
-
-
