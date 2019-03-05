@@ -3,7 +3,6 @@ package talosdev.transitions
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
@@ -22,12 +21,18 @@ class GalleryActivity : AppCompatActivity(),
 
         setContentView(R.layout.activity_main)
 
-        val frame = findViewById<View>(R.id.frame)
-
         if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                .add(R.id.frame, GridFragment.newInstance(), TAG_GALLERY)
-                .commit()
+            val goToTheater = intent.getBooleanExtra(EXTRA_THEATER, false)
+
+            if (goToTheater) {
+                supportFragmentManager.beginTransaction()
+                    .add(R.id.frame, TheaterFragment.newInstance(5), TAG_THEATER)
+                    .commit()
+            } else {
+                supportFragmentManager.beginTransaction()
+                    .add(R.id.frame, GridFragment.newInstance(), TAG_GALLERY)
+                    .commit()
+            }
         }
     }
 
