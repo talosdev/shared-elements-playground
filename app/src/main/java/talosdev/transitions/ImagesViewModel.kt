@@ -11,8 +11,11 @@ import io.reactivex.subjects.PublishSubject
  * @author Aris Papadopoulos (aris@scruff.com)
  */
 class ImagesViewModel : ViewModel() {
-    private val urls = (110..150).map {
-        "https://picsum.photos/600/800?image=$it"
+
+    companion object {
+        val urls = (110..150).map {
+            "https://picsum.photos/600/800?image=$it"
+        }
     }
 
     var currentPosition: Int = -1

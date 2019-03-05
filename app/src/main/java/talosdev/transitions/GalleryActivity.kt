@@ -1,12 +1,14 @@
 package talosdev.transitions
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 
-class MainActivity : AppCompatActivity(),
+class GalleryActivity : AppCompatActivity(),
     HasViewModel,
     GridFragment.OnFragmentInteractionListener,
     TheaterFragment.OnFragmentInteractionListener {
@@ -61,6 +63,13 @@ class MainActivity : AppCompatActivity(),
     companion object {
         const val TAG_THEATER = "theater"
         private const val TAG_GALLERY = "gallery"
+        private const val EXTRA_THEATER = "theater"
+
+        fun navigate(context: Context, goToTheater: Boolean) {
+            val intent = Intent(context, GalleryActivity::class.java)
+                .putExtra(EXTRA_THEATER, goToTheater)
+            context.startActivity(intent)
+        }
     }
 }
 
