@@ -15,6 +15,8 @@ class GalleryActivity : AppCompatActivity(),
     private lateinit var viewModel: ImagesViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        postponeEnterTransition()
+
         viewModel = ViewModelProviders.of(this).get(ImagesViewModel::class.java)
 
         super.onCreate(savedInstanceState)
@@ -70,10 +72,9 @@ class GalleryActivity : AppCompatActivity(),
         private const val TAG_GALLERY = "gallery"
         private const val EXTRA_THEATER = "theater"
 
-        fun navigate(context: Context, goToTheater: Boolean) {
-            val intent = Intent(context, GalleryActivity::class.java)
+        fun getIntent(context: Context, goToTheater: Boolean): Intent {
+            return Intent(context, GalleryActivity::class.java)
                 .putExtra(EXTRA_THEATER, goToTheater)
-            context.startActivity(intent)
         }
     }
 }

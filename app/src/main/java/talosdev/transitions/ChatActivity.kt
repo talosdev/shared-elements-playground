@@ -2,8 +2,11 @@ package talosdev.transitions
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.view.ViewCompat
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_chat.*
+
 
 class ChatActivity : AppCompatActivity() {
 
@@ -11,14 +14,23 @@ class ChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
 
-        Picasso.get().load(ImagesViewModel.urls[5]).into(chatImageView)
+        val url = ImagesViewModel.urls[5]
+
+        Picasso.get().load(url).into(chatImageView)
+        chatImageView.transitionName = url
 
         button.setOnClickListener {
-            GalleryActivity.navigate(this, false)
+            startActivity(GalleryActivity.getIntent(this, false))
         }
 
         chatImageView.setOnClickListener {
-            GalleryActivity.navigate(this, true)
+            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                this@ChatActivity,
+                chatImageView,
+                ViewCompat.getTransitionName(chatImageView) ?: ""
+            )
+            startActivity(GalleryActivity.getIntent(this, true), options.toBundle())
         }
+
     }
 }

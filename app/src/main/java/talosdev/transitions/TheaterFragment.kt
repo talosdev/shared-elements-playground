@@ -91,6 +91,7 @@ class TheaterFragment : Fragment() {
             .subscribe {
                 if (it is LoadComplete.TheaterLoadComplete) {
                     startPostponedEnterTransition()
+                    activity?.startPostponedEnterTransition()
                 }
             }
         )
