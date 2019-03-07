@@ -8,11 +8,12 @@
         android:layout_margin="10dp"
         android:layout_gravity="center">
 
-
-    <ImageView android:layout_width="@dimen/grid_item_size"
-               android:layout_height="@dimen/grid_item_size"
-               android:id="@+id/imageView"
-               android:layout_gravity="center"
-               android:scaleType="centerCrop"/>
+        <ImageView
+                android:layout_width="@dimen/grid_item_size"
+                android:layout_height="@dimen/grid_item_size"
+                android:id="@+id/imageView"
+                android:layout_gravity="center"
+                android:scaleType="centerCrop"
+        />
 
 </androidx.cardview.widget.CardView>

@@ -46,7 +46,7 @@ class ImageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val imageView = view.findViewById<ImageView>(R.id.fullscreenImage)
-        imageView.transitionName = imageUrl
+        imageView.transitionName = "theater_$imageUrl"
 
 
         target = object : com.squareup.picasso.Target {

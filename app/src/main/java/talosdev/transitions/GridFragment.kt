@@ -72,18 +72,25 @@ class GridFragment : Fragment() {
     private fun prepareTransitions() {
         exitTransition = TransitionInflater.from(context).inflateTransition(R.transition.grid_exit_transition)
 
-        setExitSharedElementCallback(
-            object : SharedElementCallback() {
-                override fun onMapSharedElements(names: List<String>, sharedElements: MutableMap<String, View>) {
-                    // Locate the ViewHolder for the clicked position.
-                    val selectedViewHolder = recyclerView
-                        .findViewHolderForAdapterPosition(viewModel.currentPosition)
-                        ?: throw NullPointerException("no viewholder found")
+        val transition = TransitionInflater.from(context)
+            .inflateTransition(R.transition.image_transition)
+        sharedElementEnterTransition = transition
 
-                    // Map the first shared element name to the child ImageView.
-                    sharedElements[names[0]] = (selectedViewHolder as GridAdapter.ImageViewHolder).imageView
-                }
-            })
+        val callback = object : SharedElementCallback() {
+            override fun onMapSharedElements(names: List<String>, sharedElements: MutableMap<String, View>) {
+                // Locate the ViewHolder for the clicked position.
+                val selectedViewHolder = recyclerView
+                    .findViewHolderForAdapterPosition(viewModel.currentPosition)
+                    ?: throw NullPointerException("no viewholder found")
+
+                // Map the first shared element name to the child ImageView.
+                sharedElements[names[0]] = (selectedViewHolder as GridAdapter.ImageViewHolder).imageView
+            }
+        }
+
+        setExitSharedElementCallback(callback)
+        setEnterSharedElementCallback(callback)
+
     }
 
     override fun onAttach(context: Context) {

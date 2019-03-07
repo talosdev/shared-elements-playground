@@ -17,7 +17,8 @@ class ChatActivity : AppCompatActivity() {
         val url = ImagesViewModel.urls[5]
 
         Picasso.get().load(url).into(chatImageView)
-        chatImageView.transitionName = url
+        // Use different transition names for transitioning into the theater
+        chatImageView.transitionName = "theater_$url"
 
         button.setOnClickListener {
             startActivity(GalleryActivity.getIntent(this, false))
@@ -31,6 +32,7 @@ class ChatActivity : AppCompatActivity() {
             )
             startActivity(GalleryActivity.getIntent(this, true), options.toBundle())
         }
+
 
     }
 }

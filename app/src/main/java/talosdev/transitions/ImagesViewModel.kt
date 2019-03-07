@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
+import kotlin.random.Random
 
 /**
  * Created by Perry Street Software Inc. on Mar 04, 2019.
@@ -13,8 +14,12 @@ import io.reactivex.subjects.PublishSubject
 class ImagesViewModel : ViewModel() {
 
     companion object {
+        val random = Random(12)
+
         val urls = (110..150).map {
-            "https://picsum.photos/600/800?image=$it"
+            val height = random.nextInt(600, 1000)
+            val width = random.nextInt(500, 800)
+            "https://picsum.photos/$width/$height?image=$it"
         }
     }
 

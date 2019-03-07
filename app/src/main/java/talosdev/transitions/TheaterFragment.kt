@@ -40,7 +40,7 @@ class TheaterFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.goToGrid -> {
-                listener?.onTheaterInteraction()
+                listener?.onTheaterInteraction(fullscreenImage)
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -61,11 +61,13 @@ class TheaterFragment : Fragment() {
 
         viewPager.adapter = TheaterViewPagerAdapter(
             // TRANS important: must be child fragment manager so that child fragment can call getParent.
-            childFragmentManager, viewModel.liveData.value!!)
+            childFragmentManager, viewModel.liveData.value!!
+        )
 
         viewPager.currentItem = position
+        viewModel.currentPosition = position
 
-        viewPager.addOnPageChangeListener( object : ViewPager.OnPageChangeListener {
+        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
             }
 
@@ -104,23 +106,24 @@ class TheaterFragment : Fragment() {
             .inflateTransition(R.transition.image_transition)
         sharedElementEnterTransition = transition
 
-
         // TRANS - mapping
         // A similar mapping is set at the GridFragment with a setExitSharedElementCallback.
-        setEnterSharedElementCallback(
-            object : SharedElementCallback() {
-                override fun onMapSharedElements(names: List<String>, sharedElements: MutableMap<String, View>) {
-                    // Locate the image view at the primary fragment (the ImageFragment that is currently
-                    // visible). To locate the fragment, call instantiateItem with the selection position.
-                    // At this stage, the method will simply return the fragment at the position and will
-                    // not create a new one.
-                    val currentFragment : ImageFragment =
-                        viewPager.adapter?.instantiateItem(viewPager, viewModel.currentPosition) as ImageFragment
+        val callback = object : SharedElementCallback() {
+            override fun onMapSharedElements(names: List<String>, sharedElements: MutableMap<String, View>) {
+                // Locate the image view at the primary fragment (the ImageFragment that is currently
+                // visible). To locate the fragment, call instantiateItem with the selection position.
+                // At this stage, the method will simply return the fragment at the position and will
+                // not create a new one.
+                val currentFragment: ImageFragment =
+                    viewPager.adapter?.instantiateItem(viewPager, viewModel.currentPosition) as ImageFragment
 
-                    // Map the first shared element name to the child ImageView.
-                    sharedElements[names[0]] = currentFragment.fullscreenImage
-                }
-            })
+                // Map the first shared element name to the child ImageView.
+                sharedElements[names[0]] = currentFragment.fullscreenImage
+            }
+        }
+        setEnterSharedElementCallback(callback)
+        setExitSharedElementCallback(callback)
+
 
     }
 
@@ -139,7 +142,7 @@ class TheaterFragment : Fragment() {
     }
 
     interface OnFragmentInteractionListener {
-        fun onTheaterInteraction()
+        fun onTheaterInteraction(view: View)
     }
 
     companion object {

@@ -3,6 +3,7 @@ package talosdev.transitions
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
@@ -54,17 +55,31 @@ class GalleryActivity : AppCompatActivity(),
             .commit()
     }
 
-    override fun onTheaterInteraction() {
-//        val theaterFragment = supportFragmentManager.findFragmentByTag(TAG_THEATER)
-//
-//        supportFragmentManager.beginTransaction()
-//            .remove(theaterFragment!!)
-//            .commit()
-//        supportFragmentManager.popBackStack()
+    override fun onTheaterInteraction(imageView: View) {
 
-        // For the time being, in order to be able to show animation when clicking the grid item,
-        // do this TODO
-        onBackPressed()
+        val gridFragment = supportFragmentManager.findFragmentByTag(TAG_GALLERY)
+        val theaterFragment = supportFragmentManager.findFragmentByTag(TAG_THEATER)
+
+        if (gridFragment == null) {
+            supportFragmentManager.beginTransaction()
+                .setReorderingAllowed(true)
+                .addSharedElement(imageView, imageView.transitionName)
+                .replace(R.id.frame, GridFragment.newInstance(), TAG_GALLERY)
+                .commit()
+        } else {
+            onBackPressed()
+        }
+    }
+
+    override fun onBackPressed() {
+        val gridFragment = supportFragmentManager.findFragmentByTag(TAG_GALLERY)
+        val theaterFragment = supportFragmentManager.findFragmentByTag(TAG_THEATER)
+
+        if (supportFragmentManager.backStackEntryCount == 0
+            && gridFragment != null) {
+            overridePendingTransition(0, 0)
+        }
+        super.onBackPressed()
     }
 
     companion object {
